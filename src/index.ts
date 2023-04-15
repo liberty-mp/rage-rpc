@@ -29,7 +29,7 @@ interface Event {
 }
 
 const ERR_NOT_FOUND = 'PROCEDURE_NOT_FOUND';
-const MAX_DATA_SIZE = 32000;
+const MAX_DATA_SIZE = 30000;
 
 const IDENTIFIER = '__rpc:id';
 const PROCESS_EVENT = '__rpc:process';
@@ -237,8 +237,7 @@ function passEventToBrowser(browser: Browser, data: Event, ignoreNotFound: boole
 	const raw = stringifyData(data);
 
 	browser.execute(
-		`var process = window["${PROCESS_EVENT}"]; if(process){ process(${JSON.stringify(raw)}); }else{ ${
-			ignoreNotFound ? '' : `mp.trigger("${PROCESS_EVENT}", '{"ret":1,"id":"${data.id}","err":"${ERR_NOT_FOUND}","env":"cef"}');`
+		`var process = window["${PROCESS_EVENT}"]; if(process){ process(${JSON.stringify(raw)}); }else{ ${ignoreNotFound ? '' : `mp.trigger("${PROCESS_EVENT}", '{"ret":1,"id":"${data.id}","err":"${ERR_NOT_FOUND}","env":"cef"}');`
 		} }`
 	);
 }
@@ -264,7 +263,6 @@ function sendEventData(event: Event, player?: Player) {
 	const sendString = stringifyData(event);
 	if (sendString.length > MAX_DATA_SIZE) {
 		const parts = chunkSubstr(sendString, MAX_DATA_SIZE);
-
 		parts.forEach((partString, index) => {
 			callEnvFunc[env](PROCESS_EVENT_PARTIAL, event.id, index, parts.length, partString);
 		});
