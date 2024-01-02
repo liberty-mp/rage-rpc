@@ -104,13 +104,13 @@ if (!glob[PROCESS_EVENT]) {
 
 			switch (environment) {
 				case 'server': {
-					ret = (ev) => info.player!.call(PROCESS_EVENT, [stringifyData(ev)]);
+					ret = (ev) => sendEventData(ev, info.player);
 					break;
 				}
 
 				case 'client': {
 					if (data.env === 'server') {
-						ret = (ev) => mp.events.callRemote(PROCESS_EVENT, stringifyData(ev));
+						ret = (ev) => sendEventData(ev);
 					} else if (data.env === 'cef') {
 						const browser = data.b && glob.__rpcBrowsers[data.b];
 						info.browser = browser;
